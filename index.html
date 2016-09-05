@@ -18,9 +18,20 @@
             <span ng-bind-html="output"></span>
         </div>
 
-        <query-builder group="filter.group"></query-builder>
+        <query-builder-parent group="filter.group" options="options"></query-builder-parent>
     </div>
 
+      
+      <script type="text/ng-template" id="/queryBuilderParent.html">
+    <ng-form name="parentForm">
+        <query-builder group="group" handler="handler"></query-builder>
+     <button class="btn btn-info" ng-disabled="parentForm.$invalid">Save</button>
+    </ng-form>
+    </script>
+      
+      
+      
+      
     <script type="text/ng-template" id="/queryBuilderDirective.html">
     <div class="alert alert-warning alert-group">
         <div class="form-inline">
@@ -29,27 +40,44 @@
             <button style="margin-left: 5px" ng-click="addGroup()" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus-sign"></span> Add Group</button>
             <button style="margin-left: 5px" ng-click="removeGroup()" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-minus-sign"></span> Remove Group</button>
         </div>
+        
         <div class="group-conditions">
             <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition">
                 <div ng-switch="rule.hasOwnProperty('group')">
                     <div ng-switch-when="true">
-                        <query-builder group="rule.group"></query-builder>
+                        <query-builder group="rule.group" handler="handler"></query-builder>
                     </div>
                     <div ng-switch-default="ng-switch-default">
-                        <div class="form-inline">
-                            <select ng-options="t.name as t.name for t in fields" ng-model="rule.field" class="form-control input-sm"></select>
-                            <select style="margin-left: 5px" ng-options="c.name as c.name for c in conditions" ng-model="rule.condition" class="form-control input-sm"></select>
-                            <input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/>
+                        <ng-form class="form-inline" name="mainForm" novalidate>
+                            <select name="column" ng-options="t.name as t.name for t in fields" ng-model="rule.field" class="form-control input-sm" required></select>
+                            <span ng-show="mainForm.column.$touched && mainForm.column.$error.required" class="text-danger">
+                            Field is required</span>
+                            
+                            <select  name="operator" style="margin-left: 5px" ng-options="c.name as c.name for c in conditions" ng-model="rule.condition" class="form-control input-sm" required></select>
+                            <span ng-show="mainForm.operator.$touched && mainForm.operator.$error.required" class="text-danger">
+                            operator is required</span>
+                            
+                            <input name="value" style="margin-left: 5px" type="text" ng-model="rule.data" required class="form-control input-sm"/>
+                            <span ng-show="mainForm.value.$touched && mainForm.value.$error.required" class="text-danger">
+                            value is required</span>
                             <button style="margin-left: 5px" ng-click="removeCondition($index)" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-minus-sign"></span></button>
-                        </div>
+                            
+                        </ng-form>
                     </div>
+                    <div class="text-danger"></div>
                 </div>
             </div>
+            <br/>
+            
         </div>
     </div>
     </script>
+  
+      
+      
+    
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular.min.js"></script>
+    <script src="angular.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.18/angular-sanitize.min.js"></script>
     <script src="angular-query-builder.js"></script>
   </body>

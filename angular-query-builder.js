@@ -6,6 +6,12 @@ app.controller('QueryBuilderCtrl', ['$scope', function ($scope) {
         return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
+    $scope.options = {};
+    
+    $scope.options.check= function(data){
+        console.log(data);
+    }
+    
     function computed(group) {
         if (!group) return "";
         for (var str = "(", i = 0; i < group.rules.length; i++) {
@@ -28,12 +34,33 @@ app.controller('QueryBuilderCtrl', ['$scope', function ($scope) {
     }, true);
 }]);
 
+
+
 var queryBuilder = angular.module('queryBuilder', []);
+
+queryBuilder.directive("queryBuilderParent",function(){
+ return {
+     restrict : "E",
+     templateUrl:'/queryBuilderParent.html',
+     scope:{
+             group: '=',
+             options:'='
+            },
+      link : function(scope,element,attr){
+          scope.handler={};
+          scope.handler.check = function(){
+              console.log("handler check has been called");
+          }
+      }
+ }
+})
+
 queryBuilder.directive('queryBuilder', ['$compile', function ($compile) {
     return {
         restrict: 'E',
         scope: {
-            group: '='
+            group: '=',
+            handler:'='
         },
         templateUrl: '/queryBuilderDirective.html',
         compile: function (element, attrs) {
@@ -63,18 +90,23 @@ queryBuilder.directive('queryBuilder', ['$compile', function ($compile) {
                 ];
 
                 scope.addCondition = function () {
+                    
                     scope.group.rules.push({
-                        condition: '=',
-                        field: 'Firstname',
-                        data: ''
+                        //condition: '=',
+                        //  field: 'Firstname',
+                        //data: ''
                     });
                 };
 
+                
                 scope.removeCondition = function (index) {
                     scope.group.rules.splice(index, 1);
                 };
 
                 scope.addGroup = function () {
+                    if(scope.handler.check){
+                        scope.handler.check();
+                    }
                     scope.group.rules.push({
                         group: {
                             operator: 'AND',
