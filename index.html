@@ -19,6 +19,7 @@
         </div>
 
         <query-builder-parent group="filter.group" options="options"></query-builder-parent>
+        
     </div>
 
       
@@ -53,9 +54,22 @@
                             <span ng-show="mainForm.column.$touched && mainForm.column.$error.required" class="text-danger">
                             Field is required</span>
                             
-                            <select  name="operator" style="margin-left: 5px" ng-options="c.name as c.name for c in conditions" ng-model="rule.condition" class="form-control input-sm" required></select>
+                            {{rule.field}}
+                            <div ng-switch="rule.field">
+                            
+                             <select  ng-switch-when="date" name="operator" style="margin-left: 5px" ng-options="c.value as c.name for c in conditions.date" ng-model="rule.condition" class="form-control input-sm" required></select>
                             <span ng-show="mainForm.operator.$touched && mainForm.operator.$error.required" class="text-danger">
                             operator is required</span>
+                             <select  ng-switch-when="datetime" name="operator" style="margin-left: 5px" ng-options="c.value as c.name for c in conditions.datetime" ng-model="rule.condition" class="form-control input-sm" required></select>
+                            <span ng-show="mainForm.operator.$touched && mainForm.operator.$error.required" class="text-danger">
+                            operator is required</span>
+                                
+                            <select ng-switch-default  name="operator" style="margin-left: 5px" ng-options="c.value as c.name for c in conditions.string" ng-model="rule.condition" class="form-control input-sm" required></select>
+                            <span ng-show="mainForm.operator.$touched && mainForm.operator.$error.required" class="text-danger">
+                            operator is required</span>
+                                
+                            </div>
+                            
                             
                             <input name="value" style="margin-left: 5px" type="text" ng-model="rule.data" required class="form-control input-sm"/>
                             <span ng-show="mainForm.value.$touched && mainForm.value.$error.required" class="text-danger">
